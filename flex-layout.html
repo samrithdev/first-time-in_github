@@ -1,0 +1,1110 @@
+<!doctype html>
+<html lang="km">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Flexbox Layout ក្នុង CSS</title>
+    <!-- Google Fonts for Khmer & Code -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Fira+Code:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Tailwind CSS for sleek utility styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Kantumruy Pro", "sans-serif"],
+              mono: ["Fira Code", "monospace"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      /* Modern Scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f5f9;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+
+      /* Smooth transitions */
+      .flex-demo-container * {
+        transition: all 0.3s ease-in-out;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-slate-100 font-sans text-slate-800 antialiased min-h-screen py-6 px-4 sm:px-6 lg:px-8"
+  >
+    <!-- ===== MAIN CONTAINER ===== -->
+    <div
+      class="max-w-5xl mx-auto bg-white rounded-2xl shadow-xl border border-slate-200/80 overflow-hidden"
+    >
+      <!-- ===== HEADER ===== -->
+      <header
+        class="bg-gradient-to-r from-blue-700 via-indigo-700 to-purple-800 text-white p-8 sm:p-10 relative overflow-hidden"
+      >
+        <div
+          class="absolute -right-10 -bottom-10 opacity-10 pointer-events-none"
+        >
+          <svg width="300" height="300" viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M4 3h16a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zm1 2v14h14V5H5zm2 2h4v10H7V7zm6 0h4v5h-4V7z"
+            />
+          </svg>
+        </div>
+        <div class="relative z-10">
+          <span
+            class="inline-block px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs font-semibold uppercase tracking-wider mb-3"
+            >CSS Tutorial</span
+          >
+          <h1
+            class="text-3xl sm:text-4xl font-extrabold tracking-tight leading-snug mb-3"
+          >
+            Flexbox Layout ក្នុង CSS
+          </h1>
+          <p
+            class="text-blue-100 text-base sm:text-lg max-w-2xl leading-relaxed"
+          >
+            <strong>Flexbox (Flexible Box Layout)</strong> គឺជាប្រព័ន្ធ Layout
+            ដ៏មានឥទ្ធិពលដែលប្រើសម្រាប់រៀបចំ តម្រឹម និងបែងចែកលំហទំនេររវាងធាតុកូនៗ
+            (Items) នៅក្នុង Container មួយយ៉ាងមានប្រសិទ្ធភាព
+            និងឆ្លើយតបគ្រប់ទំហំអេក្រង់ (Responsive Layout)។
+          </p>
+        </div>
+      </header>
+
+      <div class="p-6 sm:p-10 space-y-12">
+        <!-- INTERACTIVE PLAYGROUND BANNER -->
+        <section
+          class="bg-gradient-to-br from-indigo-50 to-blue-50 border border-indigo-100 rounded-xl p-6"
+        >
+          <h3
+            class="text-lg font-bold text-indigo-950 mb-2 flex items-center gap-2"
+          >
+            <svg
+              class="w-5 h-5 text-indigo-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
+              ></path>
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              ></path>
+            </svg>
+            កន្លែងពិសោធន៍អន្តរកម្ម (Interactive Playground)
+          </h3>
+          <p class="text-slate-600 text-sm mb-4">
+            អ្នកអាចសាកល្បងចុចលើប៊ូតុងខាងក្រោមដើម្បីមើលការប្រែប្រួល dynamic
+            នៃការតម្រៀប Flexbox ភ្លាមៗ!
+          </p>
+
+          <!-- Playground Controls -->
+          <div
+            class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 bg-white p-4 rounded-lg shadow-sm border border-slate-200"
+          >
+            <div>
+              <label
+                class="block text-xs font-bold text-slate-500 uppercase mb-2"
+                >flex-direction</label
+              >
+              <select
+                id="pg-direction"
+                onchange="updatePlayground()"
+                class="w-full bg-slate-50 border border-slate-300 text-slate-800 text-sm rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 font-mono"
+              >
+                <option value="row">row</option>
+                <option value="row-reverse">row-reverse</option>
+                <option value="column">column</option>
+                <option value="column-reverse">column-reverse</option>
+              </select>
+            </div>
+            <div>
+              <label
+                class="block text-xs font-bold text-slate-500 uppercase mb-2"
+                >justify-content</label
+              >
+              <select
+                id="pg-justify"
+                onchange="updatePlayground()"
+                class="w-full bg-slate-50 border border-slate-300 text-slate-800 text-sm rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 font-mono"
+              >
+                <option value="flex-start">flex-start</option>
+                <option value="center">center</option>
+                <option value="flex-end">flex-end</option>
+                <option value="space-between">space-between</option>
+                <option value="space-around">space-around</option>
+                <option value="space-evenly">space-evenly</option>
+              </select>
+            </div>
+            <div>
+              <label
+                class="block text-xs font-bold text-slate-500 uppercase mb-2"
+                >align-items</label
+              >
+              <select
+                id="pg-align"
+                onchange="updatePlayground()"
+                class="w-full bg-slate-50 border border-slate-300 text-slate-800 text-sm rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 font-mono"
+              >
+                <option value="stretch">stretch</option>
+                <option value="flex-start">flex-start</option>
+                <option value="center">center</option>
+                <option value="flex-end">flex-end</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Playground Preview Canvas -->
+          <div
+            id="playground-box"
+            class="flex-demo-container flex flex-row justify-start items-stretch min-h-[180px] bg-slate-800 p-4 rounded-xl gap-3 border-2 border-dashed border-indigo-400"
+          >
+            <div
+              class="bg-blue-500 text-white font-bold p-4 rounded-lg flex items-center justify-center min-w-[70px] shadow-md"
+            >
+              ធាតុ ១
+            </div>
+            <div
+              class="bg-rose-500 text-white font-bold p-4 rounded-lg flex items-center justify-center min-w-[70px] shadow-md"
+            >
+              ធាតុ ២
+            </div>
+            <div
+              class="bg-emerald-500 text-white font-bold p-4 rounded-lg flex items-center justify-center min-w-[70px] shadow-md"
+            >
+              ធាតុ ៣
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 1 -->
+        <section class="border-b border-slate-200 pb-8">
+          <h2
+            class="text-2xl font-bold text-slate-900 mb-3 flex items-center gap-3"
+          >
+            <span
+              class="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-700 text-sm font-extrabold"
+              >១</span
+            >
+            display: flex
+          </h2>
+          <p class="text-slate-600 leading-relaxed mb-4">
+            ការកំណត់ <code>display: flex</code> លើធាតុឪពុក (Parent Container)
+            នឹងធ្វើឱ្យធាតុកូនៗទាំងអស់នៅខាងក្នុងក្លាយជា
+            <strong>Flex Items</strong> ដោយស្វ័យប្រវត្តិ
+            ហើយពួកវានឹងតម្រៀបជាបន្ទាត់ផ្ដេក។
+          </p>
+          <div
+            class="bg-slate-900 text-slate-100 p-4 rounded-xl font-mono text-sm overflow-x-auto shadow-inner"
+          >
+            <span class="text-purple-400">.container</span> {<br />
+            &nbsp;&nbsp;<span class="text-sky-300">display</span>:
+            <span class="text-amber-300">flex</span>;<br />
+            }
+          </div>
+        </section>
+
+        <!-- SECTION 2 -->
+        <section class="border-b border-slate-200 pb-8 space-y-6">
+          <div>
+            <h2
+              class="text-2xl font-bold text-slate-900 mb-2 flex items-center gap-3"
+            >
+              <span
+                class="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-700 text-sm font-extrabold"
+                >២</span
+              >
+              flex-direction
+            </h2>
+            <p class="text-slate-600 leading-relaxed">
+              លក្ខណៈសម្បត្តិ
+              <code>flex-direction</code> ប្រើសម្រាប់កំណត់ទិសដៅនៃអ័ក្សចម្បង
+              (Main Axis) ក្នុងការតម្រៀបធាតុកូន។
+            </p>
+          </div>
+
+          <!-- 2.1 ROW -->
+          <div
+            class="bg-slate-50 p-5 rounded-xl border border-slate-200 space-y-3"
+          >
+            <div class="flex justify-between items-center">
+              <h3 class="font-bold text-slate-800">
+                ២.១ row (លំនាំដើម / Default)
+              </h3>
+              <code
+                class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded font-mono"
+                >flex-direction: row;</code
+              >
+            </div>
+            <div
+              class="flex flex-row gap-3 bg-white p-4 rounded-lg border border-slate-200 shadow-sm overflow-x-auto"
+            >
+              <div
+                class="bg-blue-500 text-white font-bold px-6 py-4 rounded-lg shadow-sm"
+              >
+                ធាតុ ១
+              </div>
+              <div
+                class="bg-rose-500 text-white font-bold px-6 py-4 rounded-lg shadow-sm"
+              >
+                ធាតុ ២
+              </div>
+              <div
+                class="bg-emerald-500 text-white font-bold px-6 py-4 rounded-lg shadow-sm"
+              >
+                ធាតុ ៣
+              </div>
+            </div>
+          </div>
+
+          <!-- 2.2 COLUMN -->
+          <div
+            class="bg-slate-50 p-5 rounded-xl border border-slate-200 space-y-3"
+          >
+            <div class="flex justify-between items-center">
+              <h3 class="font-bold text-slate-800">២.២ column</h3>
+              <code
+                class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded font-mono"
+                >flex-direction: column;</code
+              >
+            </div>
+            <div
+              class="flex flex-col gap-3 bg-white p-4 rounded-lg border border-slate-200 shadow-sm"
+            >
+              <div
+                class="bg-blue-500 text-white font-bold px-6 py-3 rounded-lg shadow-sm"
+              >
+                ធាតុ ១
+              </div>
+              <div
+                class="bg-rose-500 text-white font-bold px-6 py-3 rounded-lg shadow-sm"
+              >
+                ធាតុ ២
+              </div>
+              <div
+                class="bg-emerald-500 text-white font-bold px-6 py-3 rounded-lg shadow-sm"
+              >
+                ធាតុ ៣
+              </div>
+            </div>
+          </div>
+
+          <!-- 2.3 ROW-REVERSE -->
+          <div
+            class="bg-slate-50 p-5 rounded-xl border border-slate-200 space-y-3"
+          >
+            <div class="flex justify-between items-center">
+              <h3 class="font-bold text-slate-800">២.៣ row-reverse</h3>
+              <code
+                class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded font-mono"
+                >flex-direction: row-reverse;</code
+              >
+            </div>
+            <div
+              class="flex flex-row-reverse gap-3 bg-white p-4 rounded-lg border border-slate-200 shadow-sm overflow-x-auto"
+            >
+              <div
+                class="bg-blue-500 text-white font-bold px-6 py-4 rounded-lg shadow-sm"
+              >
+                ធាតុ ១
+              </div>
+              <div
+                class="bg-rose-500 text-white font-bold px-6 py-4 rounded-lg shadow-sm"
+              >
+                ធាតុ ២
+              </div>
+              <div
+                class="bg-emerald-500 text-white font-bold px-6 py-4 rounded-lg shadow-sm"
+              >
+                ធាតុ ៣
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 3 -->
+        <section class="border-b border-slate-200 pb-8 space-y-6">
+          <div>
+            <h2
+              class="text-2xl font-bold text-slate-900 mb-2 flex items-center gap-3"
+            >
+              <span
+                class="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-700 text-sm font-extrabold"
+                >៣</span
+              >
+              justify-content
+            </h2>
+            <p class="text-slate-600 leading-relaxed">
+              លក្ខណៈសម្បត្តិ
+              <code>justify-content</code> ប្រើសម្រាប់តម្រឹមធាតុកូនៗតាម
+              <strong>Main Axis (អ័ក្សដេក)</strong>។
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- flex-start -->
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <span
+                class="text-xs font-mono bg-slate-200 text-slate-700 px-2 py-1 rounded mb-2 inline-block"
+                >flex-start (លំនាំដើម)</span
+              >
+              <div
+                class="flex justify-start gap-2 bg-white p-3 rounded-lg border border-slate-200"
+              >
+                <div
+                  class="bg-blue-500 text-white font-bold p-3 rounded text-sm"
+                >
+                  ១
+                </div>
+                <div
+                  class="bg-rose-500 text-white font-bold p-3 rounded text-sm"
+                >
+                  ២
+                </div>
+                <div
+                  class="bg-emerald-500 text-white font-bold p-3 rounded text-sm"
+                >
+                  ៣
+                </div>
+              </div>
+            </div>
+
+            <!-- center -->
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <span
+                class="text-xs font-mono bg-slate-200 text-slate-700 px-2 py-1 rounded mb-2 inline-block"
+                >center</span
+              >
+              <div
+                class="flex justify-center gap-2 bg-white p-3 rounded-lg border border-slate-200"
+              >
+                <div
+                  class="bg-blue-500 text-white font-bold p-3 rounded text-sm"
+                >
+                  ១
+                </div>
+                <div
+                  class="bg-rose-500 text-white font-bold p-3 rounded text-sm"
+                >
+                  ២
+                </div>
+                <div
+                  class="bg-emerald-500 text-white font-bold p-3 rounded text-sm"
+                >
+                  ៣
+                </div>
+              </div>
+            </div>
+
+            <!-- flex-end -->
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <span
+                class="text-xs font-mono bg-slate-200 text-slate-700 px-2 py-1 rounded mb-2 inline-block"
+                >flex-end</span
+              >
+              <div
+                class="flex justify-end gap-2 bg-white p-3 rounded-lg border border-slate-200"
+              >
+                <div
+                  class="bg-blue-500 text-white font-bold p-3 rounded text-sm"
+                >
+                  ១
+                </div>
+                <div
+                  class="bg-rose-500 text-white font-bold p-3 rounded text-sm"
+                >
+                  ២
+                </div>
+                <div
+                  class="bg-emerald-500 text-white font-bold p-3 rounded text-sm"
+                >
+                  ៣
+                </div>
+              </div>
+            </div>
+
+            <!-- space-between -->
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <span
+                class="text-xs font-mono bg-slate-200 text-slate-700 px-2 py-1 rounded mb-2 inline-block"
+                >space-between</span
+              >
+              <div
+                class="flex justify-between bg-white p-3 rounded-lg border border-slate-200"
+              >
+                <div
+                  class="bg-blue-500 text-white font-bold p-3 rounded text-sm"
+                >
+                  ១
+                </div>
+                <div
+                  class="bg-rose-500 text-white font-bold p-3 rounded text-sm"
+                >
+                  ២
+                </div>
+                <div
+                  class="bg-emerald-500 text-white font-bold p-3 rounded text-sm"
+                >
+                  ៣
+                </div>
+              </div>
+            </div>
+
+            <!-- space-around -->
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <span
+                class="text-xs font-mono bg-slate-200 text-slate-700 px-2 py-1 rounded mb-2 inline-block"
+                >space-around</span
+              >
+              <div
+                class="flex justify-around bg-white p-3 rounded-lg border border-slate-200"
+              >
+                <div
+                  class="bg-blue-500 text-white font-bold p-3 rounded text-sm"
+                >
+                  ១
+                </div>
+                <div
+                  class="bg-rose-500 text-white font-bold p-3 rounded text-sm"
+                >
+                  ២
+                </div>
+                <div
+                  class="bg-emerald-500 text-white font-bold p-3 rounded text-sm"
+                >
+                  ៣
+                </div>
+              </div>
+            </div>
+
+            <!-- space-evenly -->
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <span
+                class="text-xs font-mono bg-slate-200 text-slate-700 px-2 py-1 rounded mb-2 inline-block"
+                >space-evenly</span
+              >
+              <div
+                class="flex justify-evenly bg-white p-3 rounded-lg border border-slate-200"
+              >
+                <div
+                  class="bg-blue-500 text-white font-bold p-3 rounded text-sm"
+                >
+                  ១
+                </div>
+                <div
+                  class="bg-rose-500 text-white font-bold p-3 rounded text-sm"
+                >
+                  ២
+                </div>
+                <div
+                  class="bg-emerald-500 text-white font-bold p-3 rounded text-sm"
+                >
+                  ៣
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 4 -->
+        <section class="border-b border-slate-200 pb-8 space-y-6">
+          <div>
+            <h2
+              class="text-2xl font-bold text-slate-900 mb-2 flex items-center gap-3"
+            >
+              <span
+                class="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-700 text-sm font-extrabold"
+                >៤</span
+              >
+              align-items
+            </h2>
+            <p class="text-slate-600 leading-relaxed">
+              លក្ខណៈសម្បត្តិ
+              <code>align-items</code> ប្រើសម្រាប់តម្រឹមធាតុកូនៗតាម
+              <strong>Cross Axis (អ័ក្សឈរ)</strong>។
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- flex-start -->
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <span
+                class="text-xs font-mono bg-slate-200 text-slate-700 px-2 py-1 rounded mb-2 inline-block"
+                >flex-start</span
+              >
+              <div
+                class="flex items-start h-32 gap-3 bg-white p-3 rounded-lg border border-slate-200"
+              >
+                <div class="bg-blue-500 text-white font-bold p-3 rounded">
+                  ធាតុ ១
+                </div>
+                <div class="bg-rose-500 text-white font-bold p-3 rounded">
+                  ធាតុ ២
+                </div>
+                <div class="bg-emerald-500 text-white font-bold p-3 rounded">
+                  ធាតុ ៣
+                </div>
+              </div>
+            </div>
+
+            <!-- center -->
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <span
+                class="text-xs font-mono bg-slate-200 text-slate-700 px-2 py-1 rounded mb-2 inline-block"
+                >center</span
+              >
+              <div
+                class="flex items-center h-32 gap-3 bg-white p-3 rounded-lg border border-slate-200"
+              >
+                <div class="bg-blue-500 text-white font-bold p-3 rounded">
+                  ធាតុ ១
+                </div>
+                <div class="bg-rose-500 text-white font-bold p-3 rounded">
+                  ធាតុ ២
+                </div>
+                <div class="bg-emerald-500 text-white font-bold p-3 rounded">
+                  ធាតុ ៣
+                </div>
+              </div>
+            </div>
+
+            <!-- flex-end -->
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <span
+                class="text-xs font-mono bg-slate-200 text-slate-700 px-2 py-1 rounded mb-2 inline-block"
+                >flex-end</span
+              >
+              <div
+                class="flex items-end h-32 gap-3 bg-white p-3 rounded-lg border border-slate-200"
+              >
+                <div class="bg-blue-500 text-white font-bold p-3 rounded">
+                  ធាតុ ១
+                </div>
+                <div class="bg-rose-500 text-white font-bold p-3 rounded">
+                  ធាតុ ២
+                </div>
+                <div class="bg-emerald-500 text-white font-bold p-3 rounded">
+                  ធាតុ ៣
+                </div>
+              </div>
+            </div>
+
+            <!-- stretch -->
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <span
+                class="text-xs font-mono bg-slate-200 text-slate-700 px-2 py-1 rounded mb-2 inline-block"
+                >stretch (លំនាំដើម)</span
+              >
+              <div
+                class="flex items-stretch h-32 gap-3 bg-white p-3 rounded-lg border border-slate-200"
+              >
+                <div
+                  class="bg-blue-500 text-white font-bold p-3 rounded flex items-center"
+                >
+                  ធាតុ ១
+                </div>
+                <div
+                  class="bg-rose-500 text-white font-bold p-3 rounded flex items-center"
+                >
+                  ធាតុ ២
+                </div>
+                <div
+                  class="bg-emerald-500 text-white font-bold p-3 rounded flex items-center"
+                >
+                  ធាតុ ៣
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 5 -->
+        <section class="border-b border-slate-200 pb-8 space-y-4">
+          <h2
+            class="text-2xl font-bold text-slate-900 mb-2 flex items-center gap-3"
+          >
+            <span
+              class="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-700 text-sm font-extrabold"
+              >៥</span
+            >
+            flex-wrap
+          </h2>
+          <p class="text-slate-600 leading-relaxed">
+            លក្ខណៈសម្បត្តិ
+            <code>flex-wrap</code> កំណត់ថាតើធាតុកូនគួររុំធ្លាក់ទៅជួរថ្មី (Wrap)
+            ឬអត់ នៅពេលដែលគ្មានទំហំទំនេរគ្រប់គ្រាន់។
+          </p>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div
+              class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2"
+            >
+              <span
+                class="text-xs font-mono bg-slate-200 text-slate-700 px-2 py-1 rounded"
+                >flex-wrap: nowrap; (លំនាំដើម)</span
+              >
+              <div
+                class="flex flex-nowrap gap-2 bg-white p-3 rounded-lg border border-slate-200 overflow-x-auto"
+              >
+                <div
+                  class="bg-blue-500 text-white text-xs font-bold p-3 rounded shrink-0"
+                >
+                  ធាតុ ១
+                </div>
+                <div
+                  class="bg-rose-500 text-white text-xs font-bold p-3 rounded shrink-0"
+                >
+                  ធាតុ ២
+                </div>
+                <div
+                  class="bg-emerald-500 text-white text-xs font-bold p-3 rounded shrink-0"
+                >
+                  ធាតុ ៣
+                </div>
+                <div
+                  class="bg-amber-500 text-white text-xs font-bold p-3 rounded shrink-0"
+                >
+                  ធាតុ ៤
+                </div>
+                <div
+                  class="bg-purple-500 text-white text-xs font-bold p-3 rounded shrink-0"
+                >
+                  ធាតុ ៥
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2"
+            >
+              <span
+                class="text-xs font-mono bg-slate-200 text-slate-700 px-2 py-1 rounded"
+                >flex-wrap: wrap;</span
+              >
+              <div
+                class="flex flex-wrap gap-2 bg-white p-3 rounded-lg border border-slate-200"
+              >
+                <div
+                  class="bg-blue-500 text-white text-xs font-bold p-3 rounded min-w-[90px] text-center"
+                >
+                  ធាតុ ១
+                </div>
+                <div
+                  class="bg-rose-500 text-white text-xs font-bold p-3 rounded min-w-[90px] text-center"
+                >
+                  ធាតុ ២
+                </div>
+                <div
+                  class="bg-emerald-500 text-white text-xs font-bold p-3 rounded min-w-[90px] text-center"
+                >
+                  ធាតុ ៣
+                </div>
+                <div
+                  class="bg-amber-500 text-white text-xs font-bold p-3 rounded min-w-[90px] text-center"
+                >
+                  ធាតុ ៤
+                </div>
+                <div
+                  class="bg-purple-500 text-white text-xs font-bold p-3 rounded min-w-[90px] text-center"
+                >
+                  ធាតុ ៥
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 6 & 7 (GAP & FLEX-GROW) -->
+        <section
+          class="border-b border-slate-200 pb-8 grid grid-cols-1 md:grid-cols-2 gap-6"
+        >
+          <!-- GAP -->
+          <div class="space-y-3">
+            <h2
+              class="text-xl font-bold text-slate-900 flex items-center gap-2"
+            >
+              <span
+                class="flex items-center justify-center w-7 h-7 rounded-full bg-blue-100 text-blue-700 text-xs font-extrabold"
+                >៦</span
+              >
+              gap
+            </h2>
+            <p class="text-slate-600 text-sm">
+              កំណត់ចន្លោះគម្លាត (Spacing) រវាងធាតុកូនៗដោយមិនបាច់ប្រើ Margin។
+            </p>
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <div
+                class="flex gap-6 bg-white p-3 rounded-lg border border-slate-200"
+              >
+                <div
+                  class="bg-blue-500 text-white font-bold p-3 rounded text-center flex-1"
+                >
+                  gap: 24px
+                </div>
+                <div
+                  class="bg-rose-500 text-white font-bold p-3 rounded text-center flex-1"
+                >
+                  gap: 24px
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- FLEX-GROW -->
+          <div class="space-y-3">
+            <h2
+              class="text-xl font-bold text-slate-900 flex items-center gap-2"
+            >
+              <span
+                class="flex items-center justify-center w-7 h-7 rounded-full bg-blue-100 text-blue-700 text-xs font-extrabold"
+                >៧</span
+              >
+              flex-grow
+            </h2>
+            <p class="text-slate-600 text-sm">
+              កំណត់អត្រានៃការរីកលូតលាស់ទំហំធាតុកូន ដើម្បីបំពេញចន្លោះទំនេរ។
+            </p>
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <div
+                class="flex gap-2 bg-white p-3 rounded-lg border border-slate-200"
+              >
+                <div
+                  class="grow text-xs bg-blue-500 text-white font-bold p-3 rounded text-center"
+                >
+                  grow: 1
+                </div>
+                <div
+                  class="grow-[2] text-xs bg-rose-500 text-white font-bold p-3 rounded text-center"
+                >
+                  grow: 2
+                </div>
+                <div
+                  class="grow text-xs bg-emerald-500 text-white font-bold p-3 rounded text-center"
+                >
+                  grow: 1
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 8: PRACTICAL EXAMPLES -->
+        <section class="border-b border-slate-200 pb-8 space-y-6">
+          <h2
+            class="text-2xl font-bold text-slate-900 mb-2 flex items-center gap-3"
+          >
+            <span
+              class="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-700 text-sm font-extrabold"
+              >៨</span
+            >
+            ឧទាហរណ៍អនុវត្តជាក់ស្តែង (Practical Examples)
+          </h2>
+
+          <!-- 8.1 Navigation Bar -->
+          <div class="space-y-2">
+            <h3 class="font-bold text-slate-800 text-sm">
+              ៨.១ របាររុករក (Navigation Bar)
+            </h3>
+            <nav
+              class="bg-slate-900 text-white px-6 py-4 rounded-xl flex flex-wrap justify-between items-center gap-4 shadow-md"
+            >
+              <div class="font-black text-xl text-indigo-400 tracking-wide">
+                MY BRAND
+              </div>
+              <div class="flex items-center gap-6 text-sm font-medium">
+                <a href="#" class="hover:text-indigo-400 transition-colors"
+                  >ទំព័រដើម</a
+                >
+                <a href="#" class="hover:text-indigo-400 transition-colors"
+                  >អំពីយើង</a
+                >
+                <a href="#" class="hover:text-indigo-400 transition-colors"
+                  >សេវាកម្ម</a
+                >
+                <a
+                  href="#"
+                  class="bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded-lg transition-colors"
+                  >ទំនាក់ទំនង</a
+                >
+              </div>
+            </nav>
+          </div>
+
+          <!-- 8.2 Responsive Cards -->
+          <div class="space-y-2">
+            <h3 class="font-bold text-slate-800 text-sm">
+              ៨.២ ប្លង់កាតឆ្លើយតបអេក្រង់ (Responsive Card Layout)
+            </h3>
+            <div class="flex flex-wrap gap-4">
+              <div
+                class="grow shrink-0 basis-60 bg-gradient-to-br from-blue-500 to-indigo-600 text-white p-5 rounded-xl shadow-md"
+              >
+                <h4 class="font-bold text-lg mb-1">Flexbox</h4>
+                <p class="text-blue-100 text-sm">
+                  រៀបចំធាតុជាបន្ទាត់ ១ វិមាត្រ (1D Layout Model)
+                </p>
+              </div>
+              <div
+                class="grow shrink-0 basis-60 bg-gradient-to-br from-rose-500 to-pink-600 text-white p-5 rounded-xl shadow-md"
+              >
+                <h4 class="font-bold text-lg mb-1">Grid</h4>
+                <p class="text-rose-100 text-sm">
+                  រៀបចំធាតុជាក្រឡា ២ វិមាត្រ (2D Layout Model)
+                </p>
+              </div>
+              <div
+                class="grow shrink-0 basis-60 bg-gradient-to-br from-emerald-500 to-teal-600 text-white p-5 rounded-xl shadow-md"
+              >
+                <h4 class="font-bold text-lg mb-1">Position</h4>
+                <p class="text-emerald-100 text-sm">
+                  កំណត់ទីតាំងធាតុលើអេក្រង់ច្បាស់លាស់
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 8.3 Perfect Centering -->
+          <div class="space-y-2">
+            <h3 class="font-bold text-slate-800 text-sm">
+              ៨.៣ ការតម្រឹមកណ្តាលឥតខ្ចោះ (Perfect Centering)
+            </h3>
+            <div
+              class="bg-slate-200 h-36 rounded-xl flex justify-center items-center"
+            >
+              <div
+                class="bg-white text-indigo-700 font-bold px-8 py-4 rounded-xl shadow-lg border border-slate-300 animate-pulse"
+              >
+                តម្រឹមកណ្តាលចំលំអ
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 9: SUMMARY TABLE -->
+        <section class="border-b border-slate-200 pb-8 space-y-4">
+          <h2
+            class="text-2xl font-bold text-slate-900 mb-2 flex items-center gap-3"
+          >
+            <span
+              class="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-700 text-sm font-extrabold"
+              >៩</span
+            >
+            តារាងសង្ខេប Class Selector
+          </h2>
+          <div
+            class="overflow-x-auto rounded-xl border border-slate-200 shadow-sm"
+          >
+            <table class="w-full text-left text-sm">
+              <thead class="bg-slate-900 text-white font-semibold">
+                <tr>
+                  <th class="p-3.5">Class Selector</th>
+                  <th class="p-3.5">CSS Property</th>
+                  <th class="p-3.5">ការពន្យល់ (Description)</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-200 bg-white">
+                <tr class="hover:bg-slate-50">
+                  <td class="p-3.5 font-mono text-blue-600 font-semibold">
+                    .flex-container
+                  </td>
+                  <td class="p-3.5 font-mono text-slate-600">display: flex;</td>
+                  <td class="p-3.5 text-slate-700">បង្កើត Flex Container</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="p-3.5 font-mono text-blue-600 font-semibold">
+                    .flex-row
+                  </td>
+                  <td class="p-3.5 font-mono text-slate-600">
+                    flex-direction: row;
+                  </td>
+                  <td class="p-3.5 text-slate-700">តម្រៀបទិសដៅជួរដេក</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="p-3.5 font-mono text-blue-600 font-semibold">
+                    .flex-column
+                  </td>
+                  <td class="p-3.5 font-mono text-slate-600">
+                    flex-direction: column;
+                  </td>
+                  <td class="p-3.5 text-slate-700">តម្រៀបទិសដៅជួរឈរ</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="p-3.5 font-mono text-blue-600 font-semibold">
+                    .flex-center
+                  </td>
+                  <td class="p-3.5 font-mono text-slate-600">
+                    justify-content: center; align-items: center;
+                  </td>
+                  <td class="p-3.5 text-slate-700">
+                    តម្រឹមកណ្តាលទាំងដេក និងឈរ
+                  </td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="p-3.5 font-mono text-blue-600 font-semibold">
+                    .flex-gap
+                  </td>
+                  <td class="p-3.5 font-mono text-slate-600">gap: 20px;</td>
+                  <td class="p-3.5 text-slate-700">
+                    កំណត់ចន្លោះគម្លាតរវាងធាតុ
+                  </td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="p-3.5 font-mono text-blue-600 font-semibold">
+                    .flex-grow-1
+                  </td>
+                  <td class="p-3.5 font-mono text-slate-600">flex-grow: 1;</td>
+                  <td class="p-3.5 text-slate-700">
+                    ពង្រីកទំហំស្មើៗគ្នាដើម្បីបំពេញលំហ
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- SECTION 10: SUMMARY LIST -->
+        <section class="space-y-4">
+          <h2
+            class="text-2xl font-bold text-slate-900 mb-2 flex items-center gap-3"
+          >
+            <span
+              class="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-700 text-sm font-extrabold"
+              >១០</span
+            >
+            សេចក្តីសង្ខេប (Summary Key Points)
+          </h2>
+
+          <!-- Fixed Note Box & List Syntax -->
+          <div
+            class="bg-amber-50 border-l-4 border-amber-500 p-5 rounded-r-xl space-y-3"
+          >
+            <h3
+              class="font-bold text-amber-900 text-base flex items-center gap-2"
+            >
+              <svg
+                class="w-5 h-5 text-amber-600"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                  clip-rule="evenodd"
+                ></path>
+              </svg>
+              គន្លឹះសំខាន់ៗដែលត្រូវចងចាំ៖
+            </h3>
+            <ul class="space-y-2 text-slate-700 text-sm pl-2">
+              <li class="flex items-start gap-2">
+                <span class="text-amber-600 font-bold">•</span>
+                <span
+                  ><strong>display: flex</strong> — បង្កើត Flex Container
+                  ដើម្បីគ្រប់គ្រងធាតុកូនៗ</span
+                >
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-amber-600 font-bold">•</span>
+                <span
+                  ><strong>flex-direction</strong> — កំណត់ទិសដៅនៃ Main Axis
+                  (row, column)</span
+                >
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-amber-600 font-bold">•</span>
+                <span
+                  ><strong>justify-content</strong> — តម្រឹមធាតុកូនតាម Main Axis
+                  (អ័ក្សដេក)</span
+                >
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-amber-600 font-bold">•</span>
+                <span
+                  ><strong>align-items</strong> — តម្រឹមធាតុកូនតាម Cross Axis
+                  (អ័ក្សឈរ)</span
+                >
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-amber-600 font-bold">•</span>
+                <span
+                  ><strong>flex-wrap</strong> —
+                  អនុញ្ញាតឱ្យធាតុកូនរុំធ្លាក់ជួរនៅពេលអស់ទំហំ</span
+                >
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-amber-600 font-bold">•</span>
+                <span
+                  ><strong>gap</strong> —
+                  កំណត់គម្លាតរវាងធាតុកូនៗបានយ៉ាងងាយស្រួល</span
+                >
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-amber-600 font-bold">•</span>
+                <span
+                  ><strong>flex-grow</strong> —
+                  កំណត់អត្រាលូតលាស់នៃធាតុកូននីមួយៗ</span
+                >
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-amber-600 font-bold">•</span>
+                <span
+                  ><strong>Flexbox vs Grid:</strong> Flexbox ប្រើសម្រាប់ Layout
+                  1 វិមាត្រ (1D) ចំណែក Grid ប្រើសម្រាប់ 2 វិមាត្រ (2D)</span
+                >
+              </li>
+            </ul>
+          </div>
+        </section>
+      </div>
+
+      <!-- ===== FOOTER ===== -->
+      <footer
+        class="bg-slate-900 text-slate-400 py-6 px-8 text-center text-sm border-t border-slate-800"
+      >
+        <p>
+          &copy; 2026 Flexbox Layout Guide | រៀបចំ និងកែសម្រួលសម្រាប់រៀន CSS
+          ជាភាសាខ្មែរ
+        </p>
+      </footer>
+    </div>
+
+    <!-- ===== INTERACTIVE SCRIPT ===== -->
+    <script>
+      function updatePlayground() {
+        const dir = document.getElementById("pg-direction").value;
+        const justify = document.getElementById("pg-justify").value;
+        const align = document.getElementById("pg-align").value;
+        const box = document.getElementById("playground-box");
+
+        // Reset flex classes
+        box.style.flexDirection = dir;
+        box.style.justifyContent = justify;
+        box.style.alignItems = align;
+      }
+    </script>
+  </body>
+</html>
